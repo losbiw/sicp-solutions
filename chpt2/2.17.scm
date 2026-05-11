@@ -1,0 +1,5 @@
+(define (last-pair list)
+  (let ((cdr-content (cdr list)))
+    (if (null? cdr-content)
+      (car list)
+      (last-pair cdr-content))))
