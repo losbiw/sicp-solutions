@@ -1,20 +1,5 @@
 #lang sicp
-
-(define (has-value? connector) nil)
-(define (get-value connector) nil)
-(define (set-value! connector new-value informant) nil)
-(define (forget-value! connector informant) nil)
-(define (connect connector new-constraint) nil)
-
-; dispatch
-
-(define (inform-about-value constraint)
-  (constraint 'I-have-a-value))
-
-(define (inform-about-no-value constraint)
-  (constraint 'I-lost-my-value))
-
-; constraints
+(#%require "connectors.rkt")
 
 (define (adder a1 a2 sum)
   (define (process-new-value)
@@ -85,3 +70,40 @@
   (connect m2 me)
   (connect product me)
   me)
+
+(define (constant value connector)
+  (define (me request)
+    (error "Unknown request -- CONSTANT" request))
+  (connect connector me)
+  (set-value! connector value me))
+
+(define (probe name connector)
+  (define (print-probe value)
+    (newline)
+    (display "Probe: ")
+    (display name)
+    (display " = ")
+    (display value))
+  
+  (define (process-new-value)
+    (print-probe (get-value connector)))
+
+  (define (process-forget-value)
+    (print-probe "?"))
+
+  (define (me request)
+    (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
+           (process-forget-value))
+          (else (error "Unknown request -- PROBE" request))))
+
+  (connect connector me)
+  me)
+
+; exports
+
+(#%provide adder)
+(#%provide multiplier)
+(#%provide constant)
+(#%provide probe)
