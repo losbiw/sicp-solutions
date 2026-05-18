@@ -12,6 +12,8 @@
 
     mutex))
 
+(#%provide make-mutex)
+
 (define (clear! cell)
   (set-car! cell false))
 
