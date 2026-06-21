@@ -1,17 +1,17 @@
 #lang sicp
 
-(define (cons-stream a b)
-  (cons a (delay b)))
-
+;; (define (cons-stream a b)
+;;   (cons a (delay b)))
+;; 
 (define (stream-car stream)
   (car stream))
-
+ 
 (define (stream-cdr stream)
   (force (cdr stream)))
-
-(define stream-null? null?)
-
-(define the-empty-stream '())
+;; 
+;; (define stream-null? null?)
+;; 
+;; (define the-empty-stream '())
 
 ; misc
 
@@ -21,11 +21,13 @@
       (stream-ref (stream-cdr s)
                   (- n 1))))
 
-(define (stream-map proc s)
-  (if (stream-null? s)
+(define (stream-map proc . argstreams)
+  (if (stream-null? (car argstreams))
       the-empty-stream
-      (cons-stream (proc (stream-car s))
-                   (stream-map proc (stream-cdr s)))))
+      (cons-stream
+       (apply proc (map stream-car argstreams))
+       (apply stream-map
+              (cons proc (map stream-cdr argstreams))))))
 
 (define (stream-for-each proc s)
   (if (stream-null? s)
@@ -51,9 +53,37 @@
 (define (display-stream s)
   (stream-for-each display-line s))
 
+(define (display-n-stream s n)
+  (if (= n 0)
+      'done
+      (begin
+        (display-line (stream-car s))
+        (display-n-stream (stream-cdr s) (- n 1)))))
+
 (define (display-line x)
   (newline)
   (display x))
+
+(define (scale-stream s factor)
+  (stream-map (lambda (x) (* x factor)) s))
+
+(define (negate-stream s)
+  (stream-map (lambda (x) (- x))
+              s))
+
+(define (add-streams s1 s2)
+  (stream-map + s1 s2))
+
+(define (mul-streams s1 s2)
+  (stream-map * s1 s2))
+
+(define ones (cons-stream 1 ones))
+
+(define integers (cons-stream 1 (add-streams ones
+                                             integers)))
+
+(define (integers-starting-from n)
+  (cons-stream n (integers-starting-from (+ n 1))))
 
 ; exports
 
@@ -68,4 +98,12 @@
 (#%provide stream-enumerate-interval)
 (#%provide stream-filter)
 (#%provide display-stream)
+(#%provide display-n-stream)
 (#%provide display-line)
+(#%provide scale-stream)
+(#%provide negate-stream)
+(#%provide add-streams)
+(#%provide mul-streams)
+(#%provide ones)
+(#%provide integers)
+(#%provide integers-starting-from)

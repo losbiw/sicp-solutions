@@ -10,6 +10,7 @@
 (stream-ref x 5)
 (stream-ref x 7)
 
-; Prediction: defining x prints out number from 0 through 10 and results in the following stream: (stream-cons 0 (delay stream-enumerate-interval 1 10))
-; stream-ref x 5 shows 5
-; stream-ref x 7 shows 7
+; Interval enumeration: 0
+; Stream-ref 5: 1 - 5
+; Stream-ref 6: 6, 7
+; 

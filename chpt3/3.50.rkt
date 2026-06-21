@@ -8,4 +8,4 @@
       (cons-stream
        (apply proc (map stream-car argstreams))
        (apply stream-map
-              (proc (stream-cdr argstreams))))))
+              (cons proc (stream-cdr argstreams))))))
