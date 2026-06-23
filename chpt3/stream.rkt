@@ -77,6 +77,11 @@
 (define (mul-streams s1 s2)
   (stream-map * s1 s2))
 
+(define (partial-sums s)
+  (cons-stream (stream-car s)
+               (add-streams (stream-cdr s)
+                            (partial-sums s))))
+
 (define ones (cons-stream 1 ones))
 
 (define integers (cons-stream 1 (add-streams ones
@@ -104,6 +109,7 @@
 (#%provide negate-stream)
 (#%provide add-streams)
 (#%provide mul-streams)
+(#%provide partial-sums)
 (#%provide ones)
 (#%provide integers)
 (#%provide integers-starting-from)
